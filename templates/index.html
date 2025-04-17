@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}CV Scoring System - Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <h1 class="display-4 mb-4">Automated CV Scoring & Feedback</h1>
+            <p class="lead mb-4">Get objective evaluations of candidate resumes with detailed scoring and personalized feedback.</p>
+            
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4">
+                <a href="{{ url_for('upload_resume') }}" class="btn btn-primary me-md-2">
+                    <i class="bi bi-upload me-2"></i>Upload Resume
+                </a>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-speedometer2 me-2"></i>View Dashboard
+                </a>
+            </div>
+            
+            <div class="card bg-dark">
+                <div class="card-body">
+                    <h5 class="card-title">How it works</h5>
+                    <ol class="card-text">
+                        <li>Upload candidate resumes (PDF or DOCX)</li>
+                        <li>Our AI engine analyzes and scores each resume</li>
+                        <li>View comprehensive feedback and scores</li>
+                        <li>Optionally send personalized feedback to candidates</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 d-none d-lg-block">
+            <div class="p-5 text-center">
+                <svg width="400" height="300" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Resume icon -->
+                    <rect x="100" y="50" width="150" height="200" rx="10" fill="#6c757d" />
+                    <line x1="120" y1="80" x2="230" y2="80" stroke="#f8f9fa" stroke-width="8" />
+                    <line x1="120" y1="110" x2="230" y2="110" stroke="#f8f9fa" stroke-width="4" />
+                    <line x1="120" y1="130" x2="210" y2="130" stroke="#f8f9fa" stroke-width="4" />
+                    <line x1="120" y1="160" x2="230" y2="160" stroke="#f8f9fa" stroke-width="4" />
+                    <line x1="120" y1="180" x2="190" y2="180" stroke="#f8f9fa" stroke-width="4" />
+                    <line x1="120" y1="210" x2="230" y2="210" stroke="#f8f9fa" stroke-width="4" />
+                    
+                    <!-- AI processing -->
+                    <circle cx="300" cy="150" r="50" fill="#0d6efd" />
+                    <path d="M275 150 L295 170 L325 130" stroke="#ffffff" stroke-width="8" fill="none" />
+                    
+                    <path d="M250 150 L270 150" stroke="#0d6efd" stroke-width="5" />
+                    <path d="M330 150 L350 150" stroke="#0d6efd" stroke-width="5" />
+                    
+                    <!-- Feedback report -->
+                    <rect x="350" y="50" width="150" height="200" rx="10" fill="#20c997" />
+                    <rect x="370" y="70" width="110" height="20" rx="5" fill="#f8f9fa" />
+                    <rect x="370" y="100" width="30" height="30" rx="15" fill="#ffc107" />
+                    <text x="385" y="122" font-family="Arial" font-size="18" fill="#212529">85</text>
+                    <line x1="410" y1="110" x2="470" y2="110" stroke="#f8f9fa" stroke-width="4" />
+                    <line x1="410" y1="125" x2="450" y2="125" stroke="#f8f9fa" stroke-width="4" />
+                    <line x1="370" y1="150" x2="470" y2="150" stroke="#f8f9fa" stroke-width="2" />
+                    <line x1="370" y1="170" x2="470" y2="170" stroke="#f8f9fa" stroke-width="4" />
+                    <line x1="370" y1="190" x2="470" y2="190" stroke="#f8f9fa" stroke-width="4" />
+                    <line x1="370" y1="210" x2="470" y2="210" stroke="#f8f9fa" stroke-width="4" />
+                </svg>
+            </div>
+        </div>
+    </div>
+    
+    <hr class="my-5">
+    
+    <div class="row g-4 py-4">
+        <div class="col-md-4">
+            <div class="card h-100 dashboard-stat bg-primary bg-opacity-25">
+                <div class="card-body">
+                    <i class="bi bi-file-text display-4 mb-3"></i>
+                    <h3 class="card-title">Resume Analysis</h3>
+                    <p class="card-text">Extract key information from resumes including skills, experience, and education.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 dashboard-stat bg-success bg-opacity-25">
+                <div class="card-body">
+                    <i class="bi bi-bar-chart display-4 mb-3"></i>
+                    <h3 class="card-title">Objective Scoring</h3>
+                    <p class="card-text">Score candidates based on predefined criteria and job requirements matching.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 dashboard-stat bg-info bg-opacity-25">
+                <div class="card-body">
+                    <i class="bi bi-envelope display-4 mb-3"></i>
+                    <h3 class="card-title">Automated Feedback</h3>
+                    <p class="card-text">Send personalized feedback emails to candidates with their scores and suggestions.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-5">
+        <a href="{{ url_for('upload_resume') }}" class="btn btn-lg btn-primary">
+            <i class="bi bi-arrow-right-circle me-2"></i>Get Started
+        </a>
+    </div>
+</div>
+{% endblock %}

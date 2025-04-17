@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Resume Evaluation Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #4285f4;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 30px;
+        }
+        .score-card {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .score-circle {
+            width: 80px;
+            height: 80px;
+            background-color: #4285f4;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .score-breakdown {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .score-item {
+            flex: 1;
+            padding: 0 10px;
+        }
+        .score-label {
+            font-size: 14px;
+            color: #666;
+        }
+        .score-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .feedback {
+            margin: 30px 0;
+            line-height: 1.8;
+        }
+        .footer {
+            background-color: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+        .button {
+            display: inline-block;
+            background-color: #4285f4;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        @media screen and (max-width: 600px) {
+            .score-breakdown {
+                flex-direction: column;
+            }
+            .score-item {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Resume Evaluation Results</h1>
+        </div>
+        <div class="content">
+            <p>Hello {{ name }},</p>
+            
+            <p>Thank you for submitting your resume. We have evaluated your profile and would like to share the results with you.</p>
+            
+            <div class="score-card">
+                <div class="score-circle">{{ total_score }}</div>
+                <h3>Overall Score</h3>
+                <p>Out of a possible 100 points</p>
+                
+                <div class="score-breakdown">
+                    <div class="score-item">
+                        <div class="score-label">Job Match</div>
+                        <div class="score-value">{{ jd_match }}%</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Education</div>
+                        <div class="score-value">{{ education_score }}/25</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Experience</div>
+                        <div class="score-value">{{ experience_score }}/40</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Skills</div>
+                        <div class="score-value">{{ skills_score }}/35</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="feedback">
+                <h3>Detailed Feedback</h3>
+                {% for paragraph in feedback_paragraphs %}
+                <p>{{ paragraph }}</p>
+                {% endfor %}
+            </div>
+            
+            <p>We hope this feedback is helpful for your job search. If you have any questions about your evaluation, please don't hesitate to reach out.</p>
+            
+            <p>Best regards,<br>CV Scoring Team</p>
+        </div>
+        <div class="footer">
+            <p>This is an automated assessment based on the information provided in your resume. The evaluation is meant to provide guidance and may not reflect your full range of qualifications.</p>
+            <p>© 2023 CV Scoring System. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

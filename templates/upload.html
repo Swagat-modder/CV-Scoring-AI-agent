@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Resume - CV Scoring System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 mb-3">Upload Resume</h1>
+            <p class="lead">Upload a resume in PDF or DOCX format to analyze and score it.</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data" action="{{ url_for('upload_resume') }}">
+                        <div class="mb-4 upload-area" id="upload-drop-area">
+                            <div class="text-center py-4">
+                                <i class="bi bi-cloud-upload display-1 mb-3"></i>
+                                <h4>Drag & Drop Files Here</h4>
+                                <p class="text-muted">or</p>
+                                <div class="position-relative">
+                                    <input type="file" id="resume-file" name="resume" class="form-control" multiple 
+                                           accept=".pdf,.docx" data-multiple-caption="{count} files selected" required>
+                                </div>
+                                <small class="form-text text-muted mt-2">
+                                    Accepted file types: PDF, DOCX. Maximum file size: 16MB
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="job-description" class="form-label">Job Description (Optional)</label>
+                            <textarea id="job-description" name="job_description" class="form-control" rows="6" 
+                                      placeholder="Paste the job description here to calculate match score..."></textarea>
+                            <small class="form-text text-muted">
+                                Adding a job description will help calculate how well the resume matches specific requirements.
+                            </small>
+                        </div>
+                        
+                        <div class="mb-4 form-check">
+                            <input type="checkbox" class="form-check-input" id="send-email" name="send_email">
+                            <label class="form-check-label" for="send-email">
+                                Send feedback email to candidate
+                            </label>
+                            <small class="form-text text-muted d-block">
+                                If checked and email address is found in the resume, feedback will be sent automatically.
+                            </small>
+                        </div>
+                        
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-arrow-right-circle me-2"></i>Process Resume
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="card bg-dark shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">What's Analyzed</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-dark">
+                        <i class="bi bi-mortarboard me-2 text-primary"></i>Education
+                    </li>
+                    <li class="list-group-item bg-dark">
+                        <i class="bi bi-briefcase me-2 text-primary"></i>Work Experience
+                    </li>
+                    <li class="list-group-item bg-dark">
+                        <i class="bi bi-tools me-2 text-primary"></i>Skills
+                    </li>
+                    <li class="list-group-item bg-dark">
+                        <i class="bi bi-check2-circle me-2 text-primary"></i>Format & Structure
+                    </li>
+                    <li class="list-group-item bg-dark">
+                        <i class="bi bi-intersect me-2 text-primary"></i>Job Description Match
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="card bg-dark shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Tips</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>For best results:</strong></p>
+                    <ul>
+                        <li>Ensure the resume is properly formatted</li>
+                        <li>Make sure text is selectable in PDFs</li>
+                        <li>Include detailed job description for more accurate matching</li>
+                        <li>Upload multiple resumes at once for batch processing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-resize text area
+    const textarea = document.getElementById('job-description');
+    textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+</script>
+{% endblock %}

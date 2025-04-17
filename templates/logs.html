@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Email Logs - CV Scoring System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 mb-3">Email Logs</h1>
+            <p class="lead">Track all emails sent to candidates.</p>
+        </div>
+    </div>
+    
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Email History</h5>
+            <div class="input-group input-group-sm" style="width: 250px;">
+                <input type="text" id="log-search" class="form-control" placeholder="Search...">
+                <button class="btn btn-outline-secondary" type="button">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Recipient</th>
+                        <th>Resume ID</th>
+                        <th>Date Sent</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if logs %}
+                        {% for log in logs %}
+                            <tr>
+                                <td>{{ log.id }}</td>
+                                <td>{{ log.email_to }}</td>
+                                <td>
+                                    <a href="{{ url_for('dashboard') }}#feedback-{{ log.resume_id }}" class="text-decoration-none">
+                                        #{{ log.resume_id }}
+                                    </a>
+                                </td>
+                                <td>{{ log.sent_date.strftime('%b %d, %Y %H:%M:%S') }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if log.status == 'Sent' %}bg-success
+                                        {% elif log.status == 'Failed' %}bg-danger
+                                        {% else %}bg-warning{% endif %}">
+                                        {{ log.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                <div class="py-5">
+                                    <i class="bi bi-envelope-x display-1 mb-3 text-muted"></i>
+                                    <h5>No email logs found</h5>
+                                    <p class="text-muted">Email logs will appear here once feedback emails are sent</p>
+                                    <a href="{{ url_for('upload_resume') }}" class="btn btn-primary">
+                                        <i class="bi bi-upload me-2"></i>Upload Resume
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark">
+            <h5 class="mb-0">Email Configuration</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Current Email Settings</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>SMTP Server</th>
+                                <td>{{ config.get('SMTP_SERVER', 'Not configured') }}</td>
+                            </tr>
+                            <tr>
+                                <th>SMTP Port</th>
+                                <td>{{ config.get('SMTP_PORT', 'Not configured') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Sender Name</th>
+                                <td>{{ config.get('SENDER_NAME', 'Not configured') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Sender Email</th>
+                                <td>{{ config.get('SENDER_EMAIL', 'Not configured') }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h6>Email Status</h6>
+                    <div class="card 
+                        {% if config.get('SMTP_USERNAME') and config.get('SMTP_PASSWORD') %}
+                            bg-success bg-opacity-25
+                        {% else %}
+                            bg-danger bg-opacity-25
+                        {% endif %}">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {% if config.get('SMTP_USERNAME') and config.get('SMTP_PASSWORD') %}
+                                    <i class="bi bi-check-circle-fill me-2 text-success"></i>Email Service Configured
+                                {% else %}
+                                    <i class="bi bi-exclamation-triangle-fill me-2 text-danger"></i>Email Not Configured
+                                {% endif %}
+                            </h5>
+                            <p class="card-text">
+                                {% if config.get('SMTP_USERNAME') and config.get('SMTP_PASSWORD') %}
+                                    Your email service is properly configured and feedback emails can be sent to candidates.
+                                {% else %}
+                                    Email service is not configured. Please update your email settings in the configuration to send feedback emails.
+                                {% endif %}
+                            </p>
+                            <a href="{{ url_for('settings') }}" class="btn btn-sm btn-primary">Update Settings</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Search functionality
+    document.getElementById('log-search').addEventListener('keyup', function() {
+        const searchText = this.value.toLowerCase();
+        const tableRows = document.querySelectorAll('tbody tr');
+        
+        tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if (text.includes(searchText)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

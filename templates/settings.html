@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+
+{% block title %}Settings - CV Scoring System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 mb-3">Settings</h1>
+            <p class="lead">Configure your CV Scoring System.</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-dark">
+                    <h5 class="mb-0">System Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Application Version:</strong> 1.0.0</p>
+                    <p><strong>Database:</strong> {{ config.get('DATABASE_URL', 'SQLite') }}</p>
+                    <p><strong>Upload Directory:</strong> {{ config.get('UPLOAD_FOLDER', './uploads') }}</p>
+                    <p><strong>Max Upload Size:</strong> {{ (config.get('MAX_CONTENT_LENGTH', 16*1024*1024) / (1024*1024))|int }} MB</p>
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button class="btn btn-outline-secondary" disabled>
+                            <i class="bi bi-arrow-repeat me-2"></i>Check for Updates
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark">
+                    <h5 class="mb-0">Email Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <form id="email-settings-form">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="smtp-server" class="form-label">SMTP Server</label>
+                                <input type="text" class="form-control" id="smtp-server" 
+                                       value="{{ config.get('SMTP_SERVER', 'smtp.gmail.com') }}" placeholder="smtp.example.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="smtp-port" class="form-label">SMTP Port</label>
+                                <input type="number" class="form-control" id="smtp-port" 
+                                       value="{{ config.get('SMTP_PORT', 587) }}" placeholder="587">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="smtp-username" class="form-label">SMTP Username</label>
+                                <input type="email" class="form-control" id="smtp-username" 
+                                       value="{{ config.get('SMTP_USERNAME', '') }}" placeholder="your@email.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="smtp-password" class="form-label">SMTP Password</label>
+                                <input type="password" class="form-control" id="smtp-password" 
+                                       value="{{ '•••••••••' if config.get('SMTP_PASSWORD') else '' }}" placeholder="Password">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="sender-name" class="form-label">Sender Name</label>
+                                <input type="text" class="form-control" id="sender-name" 
+                                       value="{{ config.get('SENDER_NAME', 'CV Scoring System') }}" placeholder="Your Name">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sender-email" class="form-label">Sender Email</label>
+                                <input type="email" class="form-control" id="sender-email" 
+                                       value="{{ config.get('SENDER_EMAIL', config.get('SMTP_USERNAME', '')) }}" placeholder="your@email.com">
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Email settings need to be configured through environment variables.
+                            Please set <code>SMTP_SERVER</code>, <code>SMTP_PORT</code>, <code>SMTP_USERNAME</code>, 
+                            <code>SMTP_PASSWORD</code>, <code>SENDER_NAME</code>, and <code>SENDER_EMAIL</code> 
+                            in your environment.
+                        </div>
+                        
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-primary" id="test-email-btn">
+                                <i class="bi bi-envelope me-2"></i>Test Email Configuration
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-dark">
+                    <h5 class="mb-0">Scoring Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <form id="scoring-settings-form">
+                        <div class="mb-3">
+                            <label class="form-label">Scoring Weights</label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label for="education-weight" class="form-label">Education</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" id="education-weight" value="25" min="0" max="100">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="experience-weight" class="form-label">Experience</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" id="experience-weight" value="40" min="0" max="100">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="skills-weight" class="form-label">Skills</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" id="skills-weight" value="35" min="0" max="100">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Scoring configuration needs to be set in the <code>config.py</code> file.
+                            Changes made here are for display purposes only.
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Test Email Modal -->
+<div class="modal fade" id="testEmailModal" tabindex="-1" aria-labelledby="testEmailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="testEmailModalLabel">Test Email Configuration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>This feature would send a test email to verify your SMTP settings.</p>
+                <p>Since we need to configure email settings through environment variables, this feature is currently disabled.</p>
+                <p>Please ensure you've set the following environment variables:</p>
+                <ul>
+                    <li><code>SMTP_SERVER</code></li>
+                    <li><code>SMTP_PORT</code></li>
+                    <li><code>SMTP_USERNAME</code></li>
+                    <li><code>SMTP_PASSWORD</code></li>
+                    <li><code>SENDER_NAME</code> (optional)</li>
+                    <li><code>SENDER_EMAIL</code> (optional)</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Weight validation
+    const educationWeight = document.getElementById('education-weight');
+    const experienceWeight = document.getElementById('experience-weight');
+    const skillsWeight = document.getElementById('skills-weight');
+    
+    function validateWeights() {
+        const total = parseInt(educationWeight.value) + 
+                     parseInt(experienceWeight.value) + 
+                     parseInt(skillsWeight.value);
+        
+        if (total !== 100) {
+            alert('The sum of all weights must equal 100%');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    [educationWeight, experienceWeight, skillsWeight].forEach(input => {
+        input.addEventListener('change', function() {
+            validateWeights();
+        });
+    });
+    
+    // Test email button
+    document.getElementById('test-email-btn').addEventListener('click', function() {
+        const modal = new bootstrap.Modal(document.getElementById('testEmailModal'));
+        modal.show();
+    });
+</script>
+{% endblock %}

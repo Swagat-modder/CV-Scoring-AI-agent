@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - CV Scoring System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1 class="display-5 mb-3">Resume Dashboard</h1>
+            <p class="lead">View and manage processed resumes.</p>
+        </div>
+        <div class="col-md-6 text-md-end d-flex align-items-center justify-content-md-end mt-3 mt-md-0">
+            <a href="{{ url_for('upload_resume') }}" class="btn btn-primary me-2">
+                <i class="bi bi-upload me-2"></i>Upload More
+            </a>
+            <a href="#" class="btn btn-outline-secondary" id="export-csv">
+                <i class="bi bi-download me-2"></i>Export CSV
+            </a>
+        </div>
+    </div>
+    
+    <!-- Stats cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3 mb-md-0">
+            <div class="card bg-primary bg-opacity-25 h-100">
+                <div class="card-body text-center">
+                    <h2 class="display-4">{{ resumes|length }}</h2>
+                    <p class="fs-5">Total Resumes</p>
+                </div>
+            </div>
+        </div>
+        
+        {% set avg_score = 0 %}
+        {% set high_scores = 0 %}
+        {% set avg_jd_match = 0 %}
+        
+        {% if resumes %}
+            {% set avg_score = (resumes|sum(attribute='total_score') / resumes|length)|round(1) %}
+            {% set high_scores = resumes|selectattr('total_score', 'ge', 75)|list|length %}
+            {% set avg_jd_match = (resumes|sum(attribute='jd_cv_match_score') / resumes|length)|round(1) %}
+        {% endif %}
+        
+        <div class="col-md-3 mb-3 mb-md-0">
+            <div class="card bg-success bg-opacity-25 h-100">
+                <div class="card-body text-center">
+                    <h2 class="display-4">{{ avg_score }}</h2>
+                    <p class="fs-5">Avg. Score</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3 mb-md-0">
+            <div class="card bg-info bg-opacity-25 h-100">
+                <div class="card-body text-center">
+                    <h2 class="display-4">{{ high_scores }}</h2>
+                    <p class="fs-5">High Scores (>75)</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-warning bg-opacity-25 h-100">
+                <div class="card-body text-center">
+                    <h2 class="display-4">{{ avg_jd_match }}%</h2>
+                    <p class="fs-5">Avg. JD Match</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Resumes table -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Processed Resumes</h5>
+            <div class="input-group input-group-sm" style="width: 250px;">
+                <input type="text" id="resume-search" class="form-control" placeholder="Search...">
+                <button class="btn btn-outline-secondary" type="button">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Candidate</th>
+                        <th>Score</th>
+                        <th>JD Match</th>
+                        <th>Experience</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if resumes %}
+                        {% for resume in resumes %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar bg-primary bg-opacity-25 text-primary rounded-circle me-3" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                            <span class="fw-bold">{{ resume.candidate_name[:1] }}</span>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ resume.candidate_name }}</h6>
+                                            <small class="text-muted">{{ resume.candidate_email }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="score-badge 
+                                            {% if resume.total_score >= 80 %}score-excellent
+                                            {% elif resume.total_score >= 70 %}score-good
+                                            {% elif resume.total_score >= 50 %}score-average
+                                            {% else %}score-poor{% endif %}">
+                                            {{ resume.total_score|round|int }}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar 
+                                            {% if resume.jd_cv_match_score >= 80 %}bg-success
+                                            {% elif resume.jd_cv_match_score >= 60 %}bg-primary
+                                            {% elif resume.jd_cv_match_score >= 40 %}bg-warning
+                                            {% else %}bg-danger{% endif %}" 
+                                            role="progressbar" 
+                                            style="width: {{ resume.jd_cv_match_score }}%;" 
+                                            aria-valuenow="{{ resume.jd_cv_match_score }}" 
+                                            aria-valuemin="0" 
+                                            aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">{{ resume.jd_cv_match_score|round(1) }}%</small>
+                                </td>
+                                <td>{{ resume.relevant_experience|round(1) }} years</td>
+                                <td>{{ resume.upload_date.strftime('%b %d, %Y') }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary toggle-feedback" data-target="feedback-{{ resume.id }}">
+                                            <i class="bi bi-eye me-1"></i>Feedback
+                                        </button>
+                                        {% if resume.candidate_email %}
+                                            <a href="{{ url_for('resend_email', resume_id=resume.id) }}" class="btn btn-outline-info">
+                                                <i class="bi bi-envelope me-1"></i>Email
+                                            </a>
+                                        {% endif %}
+                                        <form method="POST" action="{{ url_for('delete_resume', resume_id=resume.id) }}" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-danger delete-resume-btn">
+                                                <i class="bi bi-trash me-1"></i>Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="d-none" id="feedback-{{ resume.id }}">
+                                <td colspan="6">
+                                    <div class="card bg-dark border-0">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Feedback & Analysis</h6>
+                                            <div class="row mt-3">
+                                                <div class="col-md-4">
+                                                    <p><strong>Education:</strong> {{ resume.batch_years }} batch</p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <p><strong>Relevant Experience:</strong> {{ resume.relevant_experience|round(1) }} years</p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <p><strong>File:</strong> {{ resume.filename }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="feedback-section">{{ resume.feedback }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <div class="py-5">
+                                    <i class="bi bi-file-earmark-x display-1 mb-3 text-muted"></i>
+                                    <h5>No resumes processed yet</h5>
+                                    <p class="text-muted">Upload some resumes to get started</p>
+                                    <a href="{{ url_for('upload_resume') }}" class="btn btn-primary">
+                                        <i class="bi bi-upload me-2"></i>Upload Resume
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Search functionality
+    document.getElementById('resume-search').addEventListener('keyup', function() {
+        const searchText = this.value.toLowerCase();
+        const tableRows = document.querySelectorAll('tbody tr:not([id^="feedback-"])');
+        
+        tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if (text.includes(searchText)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+    
+    // CSV Export (client-side)
+    document.getElementById('export-csv').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Get table data
+        const table = document.querySelector('table');
+        const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+        
+        // Remove Actions column
+        headers.pop();
+        
+        const rows = [];
+        const tableRows = table.querySelectorAll('tbody tr:not([id^="feedback-"])');
+        
+        tableRows.forEach(row => {
+            const cells = Array.from(row.querySelectorAll('td'));
+            // Remove Actions column
+            cells.pop();
+            
+            const rowData = cells.map(cell => {
+                // Extract text only, removing any HTML elements
+                return cell.textContent.trim().replace(/\s+/g, ' ');
+            });
+            
+            rows.push(rowData);
+        });
+        
+        // Create CSV content
+        let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n";
+        
+        rows.forEach(row => {
+            csvContent += row.join(",") + "\n";
+        });
+        
+        // Create download link
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "resume_scores.csv");
+        document.body.appendChild(link);
+        
+        // Download file
+        link.click();
+    });
+</script>
+{% endblock %}
