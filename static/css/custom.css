@@ -1,0 +1,79 @@
+/* Custom CSS to supplement Bootstrap */
+.resume-card {
+    transition: transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.resume-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.score-badge {
+    font-size: 2rem;
+    height: 4rem;
+    width: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.score-excellent {
+    background-color: var(--bs-success);
+    color: white;
+}
+
+.score-good {
+    background-color: var(--bs-primary);
+    color: white;
+}
+
+.score-average {
+    background-color: var(--bs-warning);
+    color: white;
+}
+
+.score-poor {
+    background-color: var(--bs-danger);
+    color: white;
+}
+
+.dashboard-stat {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.dashboard-stat:hover {
+    transform: scale(1.05);
+}
+
+.upload-area {
+    border: 2px dashed var(--bs-border-color);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.upload-area:hover {
+    border-color: var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.05);
+}
+
+.upload-area.drag-over {
+    border-color: var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+}
+
+.feedback-section {
+    white-space: pre-line;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-left: 3px solid var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.05);
+}
